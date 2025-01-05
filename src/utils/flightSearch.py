@@ -13,22 +13,28 @@ def install_dependencies():
 
 def generate_google_flights_link(origin, destination, departure_date, return_date=None):
     base_url = "https://www.google.com/travel/flights"
+    params = {
+        "hl": "en",
+        "curr": "USD",
+        "tfs": "1",  # Enable flight search
+        "f": "a",    # Show all flights
+    }
+    
+    # Add origin and destination
+    params["q"] = f"Flights from {origin} to {destination}"
+    
     # Format dates as YYYY-MM-DD for Google Flights URL
-    formatted_departure = departure_date.strftime("%Y-%m-%d")
-    if return_date:
-        formatted_return = return_date.strftime("%Y-%m-%d")
-        params = {
-            "q": f"Flights from {origin} to {destination}",
-            "d1": formatted_departure,
-            "d2": formatted_return,
-            "hl": "en"
-        }
+    if isinstance(departure_date, datetime):
+        params["d1"] = departure_date.strftime("%Y-%m-%d")
     else:
-        params = {
-            "q": f"Flights from {origin} to {destination}",
-            "d1": formatted_departure,
-            "hl": "en"
-        }
+        params["d1"] = departure_date.strftime("%Y-%m-%d") if hasattr(departure_date, 'strftime') else departure_date
+        
+    if return_date:
+        if isinstance(return_date, datetime):
+            params["d2"] = return_date.strftime("%Y-%m-%d")
+        else:
+            params["d2"] = return_date.strftime("%Y-%m-%d") if hasattr(return_date, 'strftime') else return_date
+    
     return f"{base_url}?{urlencode(params)}"
 
 def main():
@@ -81,7 +87,7 @@ def main():
                 )
                 if formatted_return:
                     search_task += f" and returning on {formatted_return}"
-                search_task += " using Google Flights. Only return the cheapest option with its price, airline, and flight times."
+                search_task += ". Only return the cheapest option with its price, airline, and flight times."
 
                 async def search_flight():
                     agent = Agent(
@@ -103,7 +109,7 @@ def main():
                     origin, 
                     destination, 
                     departure_date,
-                    return_date
+                    return_date if trip_type == "round-trip" else None
                 )
                 st.markdown(f"[View on Google Flights]({flights_link})", unsafe_allow_html=True)
                 
