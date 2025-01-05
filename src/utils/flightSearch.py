@@ -76,6 +76,7 @@ def main():
     trip_type = "round-trip" if return_date and return_date > departure_date else "one-way"
 
     if st.button("Search Flights"):
+        search_placeholder = st.empty()
         with st.spinner("Searching for flights..."):
             try:
                 formatted_departure = departure_date.strftime("%d %B %Y")
@@ -98,11 +99,20 @@ def main():
                     return result
 
                 result = asyncio.run(search_flight())
-                st.success("Search completed!")
+                
+                # Extract the text from the result
+                if isinstance(result, dict) and 'done' in result:
+                    result_text = result['done'].get('text', str(result))
+                else:
+                    result_text = str(result)
                 
                 # Display results
-                st.subheader("Search Results")
-                st.write(result)
+                st.success("Search completed!")
+                
+                # Display the search results in a nice format
+                with st.container():
+                    st.subheader("Flight Search Results")
+                    st.markdown(f"```\n{result_text}\n```")
                 
                 # Generate and display Google Flights link
                 flights_link = generate_google_flights_link(
