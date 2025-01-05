@@ -13,14 +13,20 @@ def install_dependencies():
 
 def generate_google_flights_link(origin, destination, departure_date, return_date=None):
     base_url = "https://www.google.com/travel/flights"
+    # Format dates as YYYY-MM-DD for Google Flights URL
+    formatted_departure = departure_date.strftime("%Y-%m-%d")
     if return_date:
+        formatted_return = return_date.strftime("%Y-%m-%d")
         params = {
-            "q": f"Flights from {origin} to {destination} from {departure_date} to {return_date}",
+            "q": f"Flights from {origin} to {destination}",
+            "d1": formatted_departure,
+            "d2": formatted_return,
             "hl": "en"
         }
     else:
         params = {
-            "q": f"Flights from {origin} to {destination} on {departure_date}",
+            "q": f"Flights from {origin} to {destination}",
+            "d1": formatted_departure,
             "hl": "en"
         }
     return f"{base_url}?{urlencode(params)}"
@@ -81,6 +87,7 @@ def main():
                     agent = Agent(
                         task=search_task,
                         llm=ChatOpenAI(model="gpt-4"),
+                        headless=False
                     )
                     result = await agent.run()
                     return result
@@ -96,8 +103,8 @@ def main():
                 flights_link = generate_google_flights_link(
                     origin, 
                     destination, 
-                    formatted_departure,
-                    formatted_return
+                    departure_date,
+                    return_date
                 )
                 st.markdown(f"[View on Google Flights]({flights_link})", unsafe_allow_html=True)
                 
