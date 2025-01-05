@@ -160,14 +160,27 @@ def main():
                         # Create a div with custom styling
                         st.markdown('<div class="flight-result">', unsafe_allow_html=True)
                         
-                        # Format and display the result text
-                        formatted_text = result_text.replace('**Price:**', '<span class="price">💰 Price:</span>')
-                        formatted_text = formatted_text.replace('**Airline:**', '<span class="airline">✈️ Airline:</span>')
-                        formatted_text = formatted_text.replace('**Departure:**', '<div class="flight-times">🛫 Departure:</div>')
-                        formatted_text = formatted_text.replace('**Arrival:**', '<div class="flight-times">🛬 Arrival:</div>')
-                        formatted_text = formatted_text.replace('**Return:**', '<div class="flight-times">↩️ Return:</div>')
-                        formatted_text = formatted_text.replace('**Flight Duration:**', '<div class="flight-times">⏱️ Flight Duration:</div>')
+                        # Clean up the text formatting and display
+                        lines = result_text.split('\n')
+                        formatted_lines = []
+                        for line in lines:
+                            # Remove markdown formatting and clean up the line
+                            line = line.replace('**', '')
+                            line = line.replace(':', ': ')
+                            if line.startswith('- '):
+                                if 'Price' in line:
+                                    line = f'💰 {line[2:]}'
+                                elif 'Departure' in line:
+                                    line = f'🛫 {line[2:]}'
+                                elif 'Return' in line:
+                                    line = f'↩️ {line[2:]}'
+                                elif 'Flight Duration' in line:
+                                    line = f'⏱️ {line[2:]}'
+                                elif 'Operated by' in line:
+                                    line = f'✈️ {line[2:]}'
+                            formatted_lines.append(line)
                         
+                        formatted_text = '\n'.join(formatted_lines)
                         st.markdown(formatted_text, unsafe_allow_html=True)
                         st.markdown('</div>', unsafe_allow_html=True)
                     
