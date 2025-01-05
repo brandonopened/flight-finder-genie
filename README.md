@@ -19,8 +19,11 @@ This application helps you find the cheapest flights using Google Flights throug
 ## Features
 
 - Automated flight search using Google Flights
-- Easy-to-use interface
+- Customizable search parameters:
+  - Origin and destination cities
+  - Travel date selection
 - Real-time search results
+- Direct link to Google Flights with your search parameters
 - Dependency installation helper
 
 ## Note
