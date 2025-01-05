@@ -86,8 +86,7 @@ def main():
                 async def search_flight():
                     agent = Agent(
                         task=search_task,
-                        llm=ChatOpenAI(model="gpt-4"),
-                        headless=False
+                        llm=ChatOpenAI(model="gpt-4")
                     )
                     result = await agent.run()
                     return result
