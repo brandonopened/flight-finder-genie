@@ -40,6 +40,45 @@ def generate_google_flights_link(origin, destination, departure_date, return_dat
 def main():
     st.set_page_config(page_title="Flight Search Assistant", page_icon="✈️")
     
+    # Add custom CSS for better styling
+    st.markdown("""
+        <style>
+        .flight-result {
+            background-color: #f8fafc;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            margin: 10px 0;
+        }
+        .price {
+            font-size: 24px;
+            color: #0284c7;
+            font-weight: bold;
+        }
+        .airline {
+            color: #334155;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .flight-times {
+            color: #475569;
+            margin: 8px 0;
+        }
+        .google-flights-button {
+            background-color: #2563eb;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+        }
+        .google-flights-button:hover {
+            background-color: #1d4ed8;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
     st.title("Flight Search Assistant")
     
     if st.button("Install Dependencies"):
@@ -105,7 +144,6 @@ def main():
                     if 'done' in result:
                         result_text = result['done'].get('text', '')
                     elif isinstance(result, list) and result:
-                        # If result is a list, get the last done action
                         done_results = [r for r in result if isinstance(r, dict) and 'done' in r]
                         result_text = done_results[-1]['done'].get('text', '') if done_results else ''
                 else:
@@ -113,21 +151,34 @@ def main():
                 
                 # Display results
                 if result_text:
-                    st.success("Search completed!")
+                    st.success("✨ Search completed!")
                     
-                    # Display the search results preserving markdown formatting
+                    # Display the search results with enhanced styling
                     with st.container():
-                        st.subheader("Flight Search Results")
-                        st.markdown(result_text)
+                        st.subheader("🛫 Flight Search Results")
+                        
+                        # Create a div with custom styling
+                        st.markdown('<div class="flight-result">', unsafe_allow_html=True)
+                        
+                        # Format and display the result text
+                        formatted_text = result_text.replace('**Price:**', '<span class="price">💰 Price:</span>')
+                        formatted_text = formatted_text.replace('**Airline:**', '<span class="airline">✈️ Airline:</span>')
+                        formatted_text = formatted_text.replace('**Departure:**', '<div class="flight-times">🛫 Departure:</div>')
+                        formatted_text = formatted_text.replace('**Arrival:**', '<div class="flight-times">🛬 Arrival:</div>')
+                        formatted_text = formatted_text.replace('**Return:**', '<div class="flight-times">↩️ Return:</div>')
+                        formatted_text = formatted_text.replace('**Flight Duration:**', '<div class="flight-times">⏱️ Flight Duration:</div>')
+                        
+                        st.markdown(formatted_text, unsafe_allow_html=True)
+                        st.markdown('</div>', unsafe_allow_html=True)
                     
-                    # Generate and display Google Flights link
+                    # Generate and display Google Flights link with custom styling
                     flights_link = generate_google_flights_link(
                         origin, 
                         destination, 
                         departure_date,
                         return_date if trip_type == "round-trip" else None
                     )
-                    st.markdown(f"[View on Google Flights]({flights_link})", unsafe_allow_html=True)
+                    st.markdown(f'<a href="{flights_link}" target="_blank" class="google-flights-button">🔍 View on Google Flights</a>', unsafe_allow_html=True)
                 else:
                     st.error("No flight results found. Please try again.")
                 
