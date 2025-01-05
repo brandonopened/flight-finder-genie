@@ -100,28 +100,36 @@ def main():
 
                 result = asyncio.run(search_flight())
                 
-                # Extract the text from the result and preserve markdown formatting
-                if isinstance(result, dict) and 'done' in result:
-                    result_text = result['done'].get('text', str(result))
+                # Extract only the final result text
+                if isinstance(result, dict):
+                    if 'done' in result:
+                        result_text = result['done'].get('text', '')
+                    elif isinstance(result, list) and result:
+                        # If result is a list, get the last done action
+                        done_results = [r for r in result if isinstance(r, dict) and 'done' in r]
+                        result_text = done_results[-1]['done'].get('text', '') if done_results else ''
                 else:
                     result_text = str(result)
                 
                 # Display results
-                st.success("Search completed!")
-                
-                # Display the search results preserving markdown formatting
-                with st.container():
-                    st.subheader("Flight Search Results")
-                    st.markdown(result_text)  # Changed from st.markdown(f"```\n{result_text}\n```")
-                
-                # Generate and display Google Flights link
-                flights_link = generate_google_flights_link(
-                    origin, 
-                    destination, 
-                    departure_date,
-                    return_date if trip_type == "round-trip" else None
-                )
-                st.markdown(f"[View on Google Flights]({flights_link})", unsafe_allow_html=True)
+                if result_text:
+                    st.success("Search completed!")
+                    
+                    # Display the search results preserving markdown formatting
+                    with st.container():
+                        st.subheader("Flight Search Results")
+                        st.markdown(result_text)
+                    
+                    # Generate and display Google Flights link
+                    flights_link = generate_google_flights_link(
+                        origin, 
+                        destination, 
+                        departure_date,
+                        return_date if trip_type == "round-trip" else None
+                    )
+                    st.markdown(f"[View on Google Flights]({flights_link})", unsafe_allow_html=True)
+                else:
+                    st.error("No flight results found. Please try again.")
                 
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
