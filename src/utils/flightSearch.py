@@ -92,7 +92,7 @@ def main():
                 async def search_flight():
                     agent = Agent(
                         task=search_task,
-                        llm=ChatOpenAI(model="gpt-4")
+                        llm=ChatOpenAI(model="gpt-4o")  # Explicitly using gpt-4o model
                     )
                     result = await agent.run()
                     return result
