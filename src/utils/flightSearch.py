@@ -93,14 +93,14 @@ def main():
                 async def search_flight():
                     agent = Agent(
                         task=search_task,
-                        llm=ChatOpenAI(model="gpt-4o")  # Explicitly using gpt-4o model
+                        llm=ChatOpenAI(model="gpt-4o")
                     )
                     result = await agent.run()
                     return result
 
                 result = asyncio.run(search_flight())
                 
-                # Extract the text from the result
+                # Extract the text from the result and preserve markdown formatting
                 if isinstance(result, dict) and 'done' in result:
                     result_text = result['done'].get('text', str(result))
                 else:
@@ -109,10 +109,10 @@ def main():
                 # Display results
                 st.success("Search completed!")
                 
-                # Display the search results in a nice format
+                # Display the search results preserving markdown formatting
                 with st.container():
                     st.subheader("Flight Search Results")
-                    st.markdown(f"```\n{result_text}\n```")
+                    st.markdown(result_text)  # Changed from st.markdown(f"```\n{result_text}\n```")
                 
                 # Generate and display Google Flights link
                 flights_link = generate_google_flights_link(
