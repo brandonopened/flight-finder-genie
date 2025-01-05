@@ -6,24 +6,26 @@ import subprocess
 import sys
 from datetime import datetime
 from urllib.parse import urlencode
+from formatFlightResult import format_flight_result
+from styleConfig import get_streamlit_styles
 
 def install_dependencies():
+    """Install required packages and playwright."""
     subprocess.check_call([sys.executable, "-m", "pip", "install", "browser-use", "langchain-openai"])
     subprocess.check_call([sys.executable, "-m", "playwright", "install"])
 
 def generate_google_flights_link(origin, destination, departure_date, return_date=None):
+    """Generate a Google Flights URL with search parameters."""
     base_url = "https://www.google.com/travel/flights"
     params = {
         "hl": "en",
         "curr": "USD",
-        "tfs": "1",  # Enable flight search
-        "f": "a",    # Show all flights
+        "tfs": "1",
+        "f": "a",
     }
     
-    # Add origin and destination
     params["q"] = f"Flights from {origin} to {destination}"
     
-    # Format dates as YYYY-MM-DD for Google Flights URL
     if isinstance(departure_date, datetime):
         params["d1"] = departure_date.strftime("%Y-%m-%d")
     else:
@@ -38,46 +40,9 @@ def generate_google_flights_link(origin, destination, departure_date, return_dat
     return f"{base_url}?{urlencode(params)}"
 
 def main():
+    """Main function to run the Streamlit app."""
     st.set_page_config(page_title="Flight Search Assistant", page_icon="✈️")
-    
-    # Add custom CSS for better styling
-    st.markdown("""
-        <style>
-        .flight-result {
-            background-color: #f8fafc;
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid #e2e8f0;
-            margin: 10px 0;
-        }
-        .price {
-            font-size: 24px;
-            color: #0284c7;
-            font-weight: bold;
-        }
-        .airline {
-            color: #334155;
-            font-size: 18px;
-            margin: 10px 0;
-        }
-        .flight-times {
-            color: #475569;
-            margin: 8px 0;
-        }
-        .google-flights-button {
-            background-color: #2563eb;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 15px;
-        }
-        .google-flights-button:hover {
-            background-color: #1d4ed8;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+    st.markdown(get_streamlit_styles(), unsafe_allow_html=True)
     
     st.title("Flight Search Assistant")
     
@@ -90,14 +55,13 @@ def main():
                 st.error(f"Failed to install dependencies: {str(e)}")
                 return
 
-    # Add input fields
+    # Input fields
     col1, col2 = st.columns(2)
     with col1:
-        origin = st.text_input("From", "Bali")
+        origin = st.text_input("From", "Eugene, OR")
     with col2:
-        destination = st.text_input("To", "Oman")
+        destination = st.text_input("To", "Seattle, WA")
     
-    # Date inputs
     col3, col4 = st.columns(2)
     with col3:
         departure_date = st.date_input(
@@ -108,7 +72,7 @@ def main():
     with col4:
         return_date = st.date_input(
             "Return Date (Optional)",
-            None,
+            datetime(2025, 1, 17),
             min_value=departure_date
         )
 
@@ -139,52 +103,19 @@ def main():
 
                 result = asyncio.run(search_flight())
                 
-                # Extract only the final result text
-                if isinstance(result, dict):
-                    if 'done' in result:
-                        result_text = result['done'].get('text', '')
-                    elif isinstance(result, list) and result:
-                        done_results = [r for r in result if isinstance(r, dict) and 'done' in r]
-                        result_text = done_results[-1]['done'].get('text', '') if done_results else ''
-                else:
-                    result_text = str(result)
-                
-                # Display results
-                if result_text:
+                # Format and display results
+                if result:
                     st.success("✨ Search completed!")
                     
-                    # Display the search results with enhanced styling
                     with st.container():
                         st.subheader("🛫 Flight Search Results")
-                        
-                        # Create a div with custom styling
                         st.markdown('<div class="flight-result">', unsafe_allow_html=True)
                         
-                        # Clean up the text formatting and display
-                        lines = result_text.split('\n')
-                        formatted_lines = []
-                        for line in lines:
-                            # Remove markdown formatting and clean up the line
-                            line = line.replace('**', '')
-                            line = line.replace(':', ': ')
-                            if line.startswith('- '):
-                                if 'Price' in line:
-                                    line = f'💰 {line[2:]}'
-                                elif 'Departure' in line:
-                                    line = f'🛫 {line[2:]}'
-                                elif 'Return' in line:
-                                    line = f'↩️ {line[2:]}'
-                                elif 'Flight Duration' in line:
-                                    line = f'⏱️ {line[2:]}'
-                                elif 'Operated by' in line:
-                                    line = f'✈️ {line[2:]}'
-                            formatted_lines.append(line)
-                        
-                        formatted_text = '\n'.join(formatted_lines)
-                        st.markdown(formatted_text, unsafe_allow_html=True)
+                        formatted_text = format_flight_result(result)
+                        st.markdown(formatted_text)
                         st.markdown('</div>', unsafe_allow_html=True)
                     
-                    # Generate and display Google Flights link with custom styling
+                    # Generate and display Google Flights link
                     flights_link = generate_google_flights_link(
                         origin, 
                         destination, 
