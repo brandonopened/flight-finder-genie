@@ -1,69 +1,31 @@
-# Welcome to your Lovable project
+# Flight Search Assistant
 
-## Project info
+This application helps you find the cheapest flights using Google Flights through an automated search process.
 
-**URL**: https://lovable.dev/projects/83dba48b-b40c-48ae-9701-daec94499bea
+## Setup Instructions
 
-## How can I edit this code?
+1. Install Python 3.8 or higher if you haven't already
+2. Install the required dependencies:
+   ```bash
+   pip install -r requirements.txt
+   playwright install
+   ```
 
-There are several ways of editing your application.
+3. Run the Streamlit app:
+   ```bash
+   streamlit run src/utils/flightSearch.py
+   ```
 
-**Use Lovable**
+## Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/83dba48b-b40c-48ae-9701-daec94499bea) and start prompting.
+- Automated flight search using Google Flights
+- Easy-to-use interface
+- Real-time search results
+- Dependency installation helper
 
-Changes made via Lovable will be committed automatically to this repo.
+## Note
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+Make sure you have your OpenAI API key set in your environment variables:
+```bash
+export OPENAI_API_KEY='your-api-key-here'
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/83dba48b-b40c-48ae-9701-daec94499bea) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
