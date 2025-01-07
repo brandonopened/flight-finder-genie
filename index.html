@@ -3,14 +3,68 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>flight-finder-genie</title>
-    <meta name="description" content="Lovable Generated Project" />
+    <title>Multi-Tool Suite</title>
+    <meta name="description" content="Multi-purpose Tool Suite" />
     <meta name="author" content="Lovable" />
     <meta property="og:image" content="/og-image.png" />
+    <style>
+      .app-container {
+        display: flex;
+        min-height: 100vh;
+      }
+      
+      .sidebar {
+        width: 250px;
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-right: 1px solid #dee2e6;
+      }
+
+      .main-content {
+        flex: 1;
+        padding: 20px;
+      }
+
+      .tool-link {
+        text-decoration: none;
+        color: #333;
+        display: block;
+        padding: 8px 12px;
+        margin: 4px 0;
+        border-radius: 4px;
+      }
+
+      .tool-link:hover {
+        background-color: #e9ecef;
+      }
+
+      .tool-description {
+        font-size: 0.9em;
+        color: #666;
+        margin-left: 12px;
+      }
+    </style>
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root" class="app-container">
+      <nav class="sidebar">
+        <h2>Tools</h2>
+        <ul style="list-style: none; padding: 0;">
+          <li>
+            <a href="#flight-finder" class="tool-link">Flight Finder</a>
+            <div class="tool-description">Search and compare flights</div>
+          </li>
+          <li>
+            <a href="#standards-release" class="tool-link">Standards Release</a>
+            <div class="tool-description">State-specific standard updates</div>
+          </li>
+        </ul>
+      </nav>
+      <main class="main-content">
+        <!-- Content will be rendered here based on selection -->
+      </main>
+    </div>
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
