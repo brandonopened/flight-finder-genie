@@ -99,6 +99,7 @@ def main():
                         llm=ChatOpenAI(model="gpt-4o")
                     )
                     result = await agent.run()
+                    print("Raw agent result:", result)
                     return result
 
                 result = asyncio.run(search_flight())
@@ -106,6 +107,7 @@ def main():
                 # Format and display results
                 if result:
                     st.success("✨ Search completed!")
+                    st.write("Raw Response:", result)
                     
                     with st.container():
                         st.subheader("🛫 Flight Search Results")
