@@ -11,25 +11,17 @@ const Index = () => {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/search-flight", {
-        method: "POST",
-      });
-      
-      if (!response.ok) {
-        throw new Error("Failed to search flight");
-      }
-      
-      const data = await response.text();
-      setResult(data);
+      // Open Streamlit app in a new window
+      window.open("http://localhost:8501", "_blank");
       toast({
-        title: "Search completed",
-        description: "Flight results have been found!",
+        title: "Streamlit App Opened",
+        description: "The flight search application has been opened in a new window.",
       });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to search for flights. Please try again.",
+        description: "Please make sure the Streamlit app is running. Run 'streamlit run src/utils/flightSearch.py' in your terminal.",
       });
     } finally {
       setLoading(false);
@@ -45,7 +37,8 @@ const Index = () => {
         
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <p className="text-gray-600 mb-6">
-            This tool will search for the cheapest one-way flight from Bali to Oman on January 12, 2025 using Google Flights.
+            Click the button below to open the Streamlit flight search application. Make sure you have started the Streamlit server first by running:<br/>
+            <code className="bg-gray-100 px-2 py-1 rounded">streamlit run src/utils/flightSearch.py</code>
           </p>
           
           <Button
@@ -56,20 +49,24 @@ const Index = () => {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Searching Flights...
+                Opening Streamlit App...
               </>
             ) : (
-              "Search Flights"
+              "Open Flight Search"
             )}
           </Button>
         </div>
 
-        {result && (
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-semibold text-blue-900 mb-4">Search Results</h2>
-            <p className="text-gray-600 whitespace-pre-wrap">{result}</p>
-          </div>
-        )}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-xl font-semibold text-blue-900 mb-4">Setup Instructions</h2>
+          <ol className="list-decimal list-inside space-y-2 text-gray-600">
+            <li>Install Python 3.8 or higher</li>
+            <li>Install required dependencies: <code className="bg-gray-100 px-2 py-1 rounded">pip install -r requirements.txt</code></li>
+            <li>Install Playwright: <code className="bg-gray-100 px-2 py-1 rounded">playwright install</code></li>
+            <li>Set your OpenAI API key in environment variables</li>
+            <li>Run the Streamlit app: <code className="bg-gray-100 px-2 py-1 rounded">streamlit run src/utils/flightSearch.py</code></li>
+          </ol>
+        </div>
       </div>
     </div>
   );
